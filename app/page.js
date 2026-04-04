@@ -44,35 +44,17 @@ export default function Home() {
       body: JSON.stringify({ messages: newMessages }),
     });
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let assistantText = "";
-    setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
+    const json = await res.json();
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      assistantText += decoder.decode(value);
-
-      // 提取 usage 信息
-      const usageMatch = assistantText.match(/__USAGE__(\d+)\|(\d+)/);
-      if (usageMatch) {
-        setLastUsage({ prompt: parseInt(usageMatch[1]), completion: parseInt(usageMatch[2]) });
-        assistantText = assistantText.replace(/__USAGE__\d+\|\d+/, "");
-      }
-
-      setMessages((prev) => {
-        const updated = [...prev];
-        if (assistantText === "__QUOTA_EXCEEDED__") {
-          updated[updated.length - 1] = { role: "assistant", content: "⚠️ API 额度已耗尽，请去中转站充值后再使用。" };
-        } else if (assistantText === "__REQUEST_FAILED__") {
-          updated[updated.length - 1] = { role: "assistant", content: "请求失败，请稍后再试。" };
-        } else {
-          updated[updated.length - 1] = { role: "assistant", content: assistantText };
-        }
-        return updated;
-      });
+    if (json.error === "quota") {
+      setMessages((prev) => [...prev, { role: "assistant", content: "⚠️ API 额度已耗尽，请去中转站充值后再使用。" }]);
+    } else if (json.error) {
+      setMessages((prev) => [...prev, { role: "assistant", content: "请求失败，请稍后再试。" }]);
+    } else {
+      setMessages((prev) => [...prev, { role: "assistant", content: json.text }]);
+      setLastUsage({ prompt: json.prompt_tokens, completion: json.completion_tokens });
     }
+
     setLoading(false);
   }
 
@@ -101,9 +83,7 @@ export default function Home() {
       <div style={styles.header}>
         <span>Claude Chat</span>
         {lastUsage && (
-          <span style={styles.usage}>
-            ↑{lastUsage.prompt} ↓{lastUsage.completion} tokens
-          </span>
+          <span style={styles.usage}>↑{lastUsage.prompt} ↓{lastUsage.completion} tokens</span>
         )}
       </div>
       <div style={styles.messages}>
