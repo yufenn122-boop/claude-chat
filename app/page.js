@@ -31,7 +31,8 @@ export default function Home() {
 
   async function send() {
     if (!input.trim() || loading) return;
-    const userMsg = { role: "user", content: input };
+    const now = new Date().toLocaleString("zh-SG", { timeZone: "Asia/Singapore", hour12: false });
+    const userMsg = { role: "user", content: input, time: now };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
@@ -51,7 +52,7 @@ export default function Home() {
     } else if (json.error) {
       setMessages((prev) => [...prev, { role: "assistant", content: "请求失败，请稍后再试。" }]);
     } else {
-      setMessages((prev) => [...prev, { role: "assistant", content: json.text }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: json.text, time: new Date().toLocaleString("zh-SG", { timeZone: "Asia/Singapore", hour12: false }) }]);
       setLastUsage({ prompt: json.prompt_tokens, completion: json.completion_tokens });
     }
 
@@ -94,6 +95,7 @@ export default function Home() {
           <div key={i} style={m.role === "user" ? styles.userBubble : styles.aiBubble}>
             <span style={styles.role}>{m.role === "user" ? "你" : "Claude"}</span>
             <div style={styles.text}>{m.content}</div>
+            {m.time && <div style={styles.time}>{m.time}</div>}
           </div>
         ))}
         <div ref={bottomRef} />
@@ -130,7 +132,7 @@ const styles = {
   inputRow: { display: "flex", gap: 8, padding: 12, borderTop: "1px solid #eee", background: "#fff" },
   textarea: { flex: 1, padding: "10px 12px", borderRadius: 8, border: "1px solid #ddd", resize: "none", fontSize: 15, fontFamily: "sans-serif" },
   button: { padding: "0 20px", background: "#0070f3", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 15 },
-  lockScreen: { display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f5f5f5" },
+  time: { fontSize: 10, opacity: 0.6, marginTop: 4, textAlign: "right" }, { display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f5f5f5" },
   lockBox: { background: "#fff", padding: 32, borderRadius: 16, display: "flex", flexDirection: "column", gap: 12, width: 280, boxShadow: "0 2px 16px rgba(0,0,0,0.1)" },
   lockTitle: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 8 },
   pwInput: { padding: "10px 12px", borderRadius: 8, border: "1px solid #ddd", fontSize: 15 },
