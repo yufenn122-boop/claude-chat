@@ -1,6 +1,10 @@
 export const metadata = {
   title: "Claude Chat",
   description: "Chat with Claude",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
