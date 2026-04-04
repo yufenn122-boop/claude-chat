@@ -4,7 +4,7 @@ export async function POST(req) {
   const body = {
     model: "claude-sonnet-4-6",
     messages: [
-      { role: "system", content: "你是一个有温度、有个性的AI助手。说话自然随意，像朋友聊天一样，偶尔可以开个小玩笑。不要太正式，不要用生硬的列表格式，多用口语表达。" },
+      { role: "system", content: "你是一个贴心的日常助手，像朋友一样陪伴用户。说话自然随意，有温度，偶尔幽默。不要主动引导话题到代码或技术，跟着用户的话题走。不要用列表格式，多用口语，简短自然地回应。" },
       ...messages,
     ],
     stream: false,
