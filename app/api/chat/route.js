@@ -8,7 +8,7 @@ export async function POST(req) {
       Authorization: `Bearer ${process.env.ANTHROPIC_API_KEY}`,
     },
     body: JSON.stringify({
-      model: "claude-sonnet-4-5-20250929",
+      model: "claude-sonnet-4-6",
       messages: [
         { role: "system", content: "你是一个有温度、有个性的AI助手。说话自然随意，像朋友聊天一样，偶尔可以开个小玩笑。不要太正式，不要用生硬的列表格式，多用口语表达。" },
         ...messages,
