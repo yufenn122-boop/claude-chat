@@ -14,6 +14,15 @@ export async function POST(req) {
     }),
   });
 
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const msg = (err?.error?.message || "").toLowerCase();
+    if (res.status === 429 || msg.includes("quota") || msg.includes("insufficient") || msg.includes("balance")) {
+      return new Response("__QUOTA_EXCEEDED__", { status: 200 });
+    }
+    return new Response("__REQUEST_FAILED__", { status: 200 });
+  }
+
   const encoder = new TextEncoder();
   const readable = new ReadableStream({
     async start(controller) {

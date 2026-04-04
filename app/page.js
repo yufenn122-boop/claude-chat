@@ -53,7 +53,13 @@ export default function Home() {
       assistantText += decoder.decode(value);
       setMessages((prev) => {
         const updated = [...prev];
-        updated[updated.length - 1] = { role: "assistant", content: assistantText };
+        if (assistantText === "__QUOTA_EXCEEDED__") {
+          updated[updated.length - 1] = { role: "assistant", content: "⚠️ API 额度已耗尽，请去中转站充值后再使用。" };
+        } else if (assistantText === "__REQUEST_FAILED__") {
+          updated[updated.length - 1] = { role: "assistant", content: "请求失败，请稍后再试。" };
+        } else {
+          updated[updated.length - 1] = { role: "assistant", content: assistantText };
+        }
         return updated;
       });
     }
