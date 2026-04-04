@@ -14,6 +14,7 @@ export async function POST(req) {
         ...messages,
       ],
       stream: true,
+      stream_options: { include_usage: true },
     }),
   });
 
@@ -48,6 +49,11 @@ export async function POST(req) {
             const json = JSON.parse(data);
             const text = json.choices?.[0]?.delta?.content;
             if (text) controller.enqueue(encoder.encode(text));
+            if (json.usage) {
+              const usage = json.usage;
+              const info = `__USAGE__${usage.prompt_tokens}|${usage.completion_tokens}`;
+              controller.enqueue(encoder.encode(info));
+            }
           } catch {}
         }
       }

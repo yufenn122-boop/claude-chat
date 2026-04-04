@@ -8,6 +8,7 @@ export default function Home() {
   const [authed, setAuthed] = useState(false);
   const [pwInput, setPwInput] = useState("");
   const [pwError, setPwError] = useState(false);
+  const [lastUsage, setLastUsage] = useState(null);
   const bottomRef = useRef(null);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function Home() {
     setMessages(newMessages);
     setInput("");
     setLoading(true);
+    setLastUsage(null);
 
     const res = await fetch("/api/chat", {
       method: "POST",
@@ -51,6 +53,14 @@ export default function Home() {
       const { done, value } = await reader.read();
       if (done) break;
       assistantText += decoder.decode(value);
+
+      // 提取 usage 信息
+      const usageMatch = assistantText.match(/__USAGE__(\d+)\|(\d+)/);
+      if (usageMatch) {
+        setLastUsage({ prompt: parseInt(usageMatch[1]), completion: parseInt(usageMatch[2]) });
+        assistantText = assistantText.replace(/__USAGE__\d+\|\d+/, "");
+      }
+
       setMessages((prev) => {
         const updated = [...prev];
         if (assistantText === "__QUOTA_EXCEEDED__") {
@@ -88,7 +98,14 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      <div style={styles.header}>Claude Chat</div>
+      <div style={styles.header}>
+        <span>Claude Chat</span>
+        {lastUsage && (
+          <span style={styles.usage}>
+            ↑{lastUsage.prompt} ↓{lastUsage.completion} tokens
+          </span>
+        )}
+      </div>
       <div style={styles.messages}>
         {messages.length === 0 && (
           <div style={styles.empty}>发送消息开始对话</div>
@@ -122,7 +139,8 @@ export default function Home() {
 
 const styles = {
   container: { display: "flex", flexDirection: "column", height: "100vh", maxWidth: 700, margin: "0 auto", fontFamily: "sans-serif" },
-  header: { padding: "16px", fontSize: 20, fontWeight: "bold", borderBottom: "1px solid #eee", background: "#fff" },
+  header: { padding: "16px", fontSize: 20, fontWeight: "bold", borderBottom: "1px solid #eee", background: "#fff", display: "flex", justifyContent: "space-between", alignItems: "center" },
+  usage: { fontSize: 12, fontWeight: "normal", color: "#888" },
   messages: { flex: 1, overflowY: "auto", padding: 16, display: "flex", flexDirection: "column", gap: 12 },
   empty: { color: "#aaa", textAlign: "center", marginTop: 40 },
   userBubble: { alignSelf: "flex-end", background: "#0070f3", color: "#fff", borderRadius: 12, padding: "10px 14px", maxWidth: "80%" },
