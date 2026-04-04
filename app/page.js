@@ -5,11 +5,28 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [authed, setAuthed] = useState(false);
+  const [pwInput, setPwInput] = useState("");
+  const [pwError, setPwError] = useState(false);
   const bottomRef = useRef(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  async function checkPassword() {
+    const res = await fetch("/api/auth", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password: pwInput }),
+    });
+    if (res.ok) {
+      setAuthed(true);
+      setPwError(false);
+    } else {
+      setPwError(true);
+    }
+  }
 
   async function send() {
     if (!input.trim() || loading) return;
@@ -41,6 +58,26 @@ export default function Home() {
       });
     }
     setLoading(false);
+  }
+
+  if (!authed) {
+    return (
+      <div style={styles.lockScreen}>
+        <div style={styles.lockBox}>
+          <div style={styles.lockTitle}>Claude Chat</div>
+          <input
+            style={styles.pwInput}
+            type="password"
+            placeholder="输入密码"
+            value={pwInput}
+            onChange={(e) => setPwInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && checkPassword()}
+          />
+          {pwError && <div style={styles.pwError}>密码错误</div>}
+          <button style={styles.button} onClick={checkPassword}>进入</button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -89,4 +126,9 @@ const styles = {
   inputRow: { display: "flex", gap: 8, padding: 12, borderTop: "1px solid #eee", background: "#fff" },
   textarea: { flex: 1, padding: "10px 12px", borderRadius: 8, border: "1px solid #ddd", resize: "none", fontSize: 15, fontFamily: "sans-serif" },
   button: { padding: "0 20px", background: "#0070f3", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 15 },
+  lockScreen: { display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f5f5f5" },
+  lockBox: { background: "#fff", padding: 32, borderRadius: 16, display: "flex", flexDirection: "column", gap: 12, width: 280, boxShadow: "0 2px 16px rgba(0,0,0,0.1)" },
+  lockTitle: { fontSize: 22, fontWeight: "bold", textAlign: "center", marginBottom: 8 },
+  pwInput: { padding: "10px 12px", borderRadius: 8, border: "1px solid #ddd", fontSize: 15 },
+  pwError: { color: "red", fontSize: 13, textAlign: "center" },
 };
