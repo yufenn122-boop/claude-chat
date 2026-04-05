@@ -140,6 +140,7 @@ export default function Home() {
   }
 
   async function deleteSession(id) {
+    if (!window.confirm("确定删除这个对话吗？")) return;
     await fetch(`/api/sessions/${id}`, { method: "DELETE" });
     setSessions((prev) => {
       const next = prev.filter((s) => s.id !== id);
