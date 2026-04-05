@@ -472,20 +472,24 @@ export default function Home() {
             const displayText = m.display_content || m.content;
             const isHighlighted = m.id === highlightMsgId;
             return (
-              <div key={m.id || i}
-                ref={(el) => { if (m.id) msgRefs.current[m.id] = el; }}
-                style={{
-                  ...(m.role === "user" ? styles.userBubble : styles.aiBubble),
-                  ...(isHighlighted ? { borderLeft: "4px solid #f6c90e", background: m.role === "user" ? "#1a5fd4" : "rgba(246,201,14,0.18)", transition: "all 0.3s" } : {}),
-                }}>
-                <span style={styles.role}>{m.role === "user" ? "你" : "Claude"}</span>
-                <div style={styles.text}>{renderWithLinks(displayText)}</div>
-                <div style={styles.bubbleFooter}>
-                  {m.time && <span style={styles.time}>{m.time}</span>}
-                  <button style={styles.copyBtn} onClick={() => copyMsg(displayText, i)}>
-                    {copied === i ? "✓" : "复制"}
-                  </button>
+              <div key={m.id || i} style={{ display: "flex", alignItems: "flex-start", justifyContent: m.role === "user" ? "flex-end" : "flex-start", gap: 6 }}>
+                {isHighlighted && m.role !== "user" && <span style={{ fontSize: 20, lineHeight: 1, marginTop: 8, animation: "none" }}>👉</span>}
+                <div
+                  ref={(el) => { if (m.id) msgRefs.current[m.id] = el; }}
+                  style={{
+                    ...(m.role === "user" ? styles.userBubble : styles.aiBubble),
+                    ...(isHighlighted ? { borderLeft: "4px solid #f6c90e", background: m.role === "user" ? "#1a5fd4" : "rgba(246,201,14,0.18)", transition: "all 0.3s" } : {}),
+                  }}>
+                  <span style={styles.role}>{m.role === "user" ? "你" : "Claude"}</span>
+                  <div style={styles.text}>{renderWithLinks(displayText)}</div>
+                  <div style={styles.bubbleFooter}>
+                    {m.time && <span style={styles.time}>{m.time}</span>}
+                    <button style={styles.copyBtn} onClick={() => copyMsg(displayText, i)}>
+                      {copied === i ? "✓" : "复制"}
+                    </button>
+                  </div>
                 </div>
+                {isHighlighted && m.role === "user" && <span style={{ fontSize: 20, lineHeight: 1, marginTop: 8 }}>👈</span>}
               </div>
             );
           })}
