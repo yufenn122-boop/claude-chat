@@ -208,7 +208,7 @@ export default function Home() {
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={styles.statsText}>{msgCount}条 · {totalTokens} tokens</span>
-            <button style={styles.iconBtn} onClick={exportSession} title="导出">↓</button>
+            <button style={styles.exportBtn} onClick={exportSession} title="导出对话">导出</button>
           </div>
         </div>
 
@@ -286,6 +286,7 @@ const styles = {
   inputRow: { display: "flex", gap: 8, padding: 12, borderTop: "1px solid #eee", background: "#fff" },
   textarea: { flex: 1, padding: "10px 12px", borderRadius: 8, border: "1px solid #ddd", resize: "none", fontSize: 15, fontFamily: "sans-serif" },
   button: { padding: "0 20px", background: "#0070f3", color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 15 },
+  exportBtn: { background: "#0070f3", color: "#fff", border: "none", borderRadius: 6, padding: "4px 10px", fontSize: 13, cursor: "pointer" },
   iconBtn: { background: "none", border: "none", cursor: "pointer", fontSize: 15, padding: "4px 8px", borderRadius: 6, color: "#555" },
   lockScreen: { display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", background: "#f5f5f5" },
   lockBox: { background: "#fff", padding: 32, borderRadius: 16, display: "flex", flexDirection: "column", gap: 12, width: 280, boxShadow: "0 2px 16px rgba(0,0,0,0.1)" },
