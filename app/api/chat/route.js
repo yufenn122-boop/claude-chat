@@ -51,7 +51,7 @@ export async function POST(req) {
             try {
               const json = JSON.parse(data);
               const text = json.choices?.[0]?.delta?.content;
-              if (text) controller.enqueue(encoder.encode("t:" + text));
+              if (text) controller.enqueue(encoder.encode("t:" + text.replace(/\n/g, "\\n")));
               if (json.usage) {
                 promptTokens = json.usage.prompt_tokens || 0;
                 completionTokens = json.usage.completion_tokens || 0;
