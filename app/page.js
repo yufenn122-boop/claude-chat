@@ -476,7 +476,7 @@ export default function Home() {
                 ref={(el) => { if (m.id) msgRefs.current[m.id] = el; }}
                 style={{
                   ...(m.role === "user" ? styles.userBubble : styles.aiBubble),
-                  ...(isHighlighted ? { outline: "2px solid #ffe066", outlineOffset: 2 } : {}),
+                  ...(isHighlighted ? { borderLeft: "4px solid #f6c90e", background: m.role === "user" ? "#1a5fd4" : "rgba(246,201,14,0.18)", transition: "all 0.3s" } : {}),
                 }}>
                 <span style={styles.role}>{m.role === "user" ? "你" : "Claude"}</span>
                 <div style={styles.text}>{renderWithLinks(displayText)}</div>
