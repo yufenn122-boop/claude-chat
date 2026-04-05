@@ -1,6 +1,7 @@
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 
 export async function GET(_, { params }) {
+  const supabase = getSupabase();
   const { id } = await params;
   const { data, error } = await supabase
     .from("messages")
@@ -12,6 +13,7 @@ export async function GET(_, { params }) {
 }
 
 export async function POST(req, { params }) {
+  const supabase = getSupabase();
   const { id } = await params;
   const { role, content, display_content, time } = await req.json();
   const { data, error } = await supabase
