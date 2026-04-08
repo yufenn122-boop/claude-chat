@@ -1,7 +1,7 @@
 export async function POST(req) {
   const { messages, model } = await req.json();
 
-  const res = await fetch("https://code.ppchat.vip/v1/chat/completions", {
+  const res = await fetch("https://new.aicode.us.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
